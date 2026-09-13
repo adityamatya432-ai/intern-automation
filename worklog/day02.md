@@ -2,50 +2,46 @@
 
 ## Goal
 
-To compare ground-truth process boundaries with raw desktop
-events from one Dataset A session and identify possible signals
-for process segmentation.
+Compare GT process boundaries  of a session with raw desktop events and identify useful signals for segmentation.
 
 ## Work completed
 
-- Created an Excel-based analysis for one Dataset A session.
-- Reviewed important process boundaries from `gt.jsonl`.
-- Compared raw `events.jsonl` activity around multiple boundaries.
-- Created a `Raw Event Analysis` sheet.
-- Recorded application transitions, browser/window activity,
-  clipboard actions, keyboard interactions, and timing gaps.
+- Analyzed first session from  Dataset A  using `gt.jsonl`.
+- Identified important process boundaries.
+- Compared raw `events.jsonl` around selected boundaries.
+- Created an Excel analysis with a `Raw Event Analysis` sheet.
+- Observed app/window changes, browser activity, clipboard/paste,keyboard/mouse activity, business context, and timing gaps.
 
 ## Boundaries analyzed
 
-- H → C at 12:21:41.332
-- C → B at 12:22:25.681
-- B → A at 12:23:22.089
-- A → M at 12:23:46.001
+- H → C
+- C → B
+- B → A
+- A → M
+- B suspended → H
+- H → J
 
-## Initial observations
+## Key observations
 
-Application changes alone do not consistently correspond to
-process boundaries.
-
-Other potentially useful signals include:
-- application/window transitions
-- browser/window switching
-- clipboard and paste activity
-- changes in business-context text
-- interaction bursts
-- timing gaps
-
-These are preliminary observations and have not yet been
-converted into a final segmentation algorithm.
+- Application switching alone is not enough.
+- Browser/window and business-context changes can help.
+- Clipboard and interaction patterns are useful supporting signals.
+- Suspended/resumed processes make segmentation non-contiguous.
 
 ## What I learned
 
-A raw event timeline contains many low-level events that cannot
-be directly treated as process boundaries. Ground-truth boundaries
-need to be compared with the surrounding raw activity to identify
-reliable signals.
+Reliable segmentation will likely require multiple signals instead of a single event type.
+
+## Segmentation direction
+
+I will use multiple signals such as:
+- application/window changes
+- business-context changes
+- interaction patterns
+- timing gaps
+
+The first implementation will be rule-based and will be validated against Dataset A ground truth.
 
 ## Next step
 
-Analyze more examples from Dataset A and determine which signals
-are consistent enough to form an initial segmentation approach.
+Build an initial rule-based segmentation baseline and validate it against Dataset A ground truth.
