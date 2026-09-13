@@ -2,15 +2,18 @@
 
 ## Goal
 
-Compare GT process boundaries  of a session with raw desktop events and identify useful signals for segmentation.
+To compare ground-truth process boundaries with raw desktop events from one Dataset A session and identify useful signals for
+process segmentation.
 
 ## Work completed
 
-- Analyzed first session from  Dataset A  using `gt.jsonl`.
-- Identified important process boundaries.
-- Compared raw `events.jsonl` around selected boundaries.
-- Created an Excel analysis with a `Raw Event Analysis` sheet.
-- Observed app/window changes, browser activity, clipboard/paste,keyboard/mouse activity, business context, and timing gaps.
+- Created an Excel-based analysis for one Dataset A session.
+- Reviewed important process boundaries from `gt.jsonl`.
+- Compared raw `events.jsonl` activity around selected boundaries.
+- Created a `Raw Event Analysis` sheet.
+- Observed application/window changes, browser activity,
+  clipboard/paste, keyboard/mouse activity, business context,
+  and timing gaps.
 
 ## Boundaries analyzed
 
@@ -30,11 +33,13 @@ Compare GT process boundaries  of a session with raw desktop events and identify
 
 ## What I learned
 
-Reliable segmentation will likely require multiple signals instead of a single event type.
+Reliable segmentation will likely require multiple signals instead of
+a single event type.
 
 ## Segmentation direction
 
 I will use multiple signals such as:
+
 - application/window changes
 - business-context changes
 - interaction patterns
@@ -44,4 +49,5 @@ The first implementation will be rule-based and will be validated against Datase
 
 ## Next step
 
-Build an initial rule-based segmentation baseline and validate it against Dataset A ground truth.
+Build an initial rule-based segmentation baseline and validate it
+against Dataset A ground truth.
