@@ -2,10 +2,10 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include<vector>
 
 using namespace std;
 
-// Get a simple string field from JSON
 string getValue(string line, string key) {
 
     string target = "\"" + key + "\":\"";
@@ -24,7 +24,6 @@ string getValue(string line, string key) {
     return line.substr(start, end - start);
 }
 
-// Get timestamp_ms
 long long getTime(string line) {
 
     string target = "\"timestamp_ms\":";
@@ -43,7 +42,6 @@ long long getTime(string line) {
     return stoll(line.substr(start, end - start));
 }
 
-// Get app name from active_app
 string getApp(string line) {
 
     string target = "\"app_name\":\"";
@@ -64,14 +62,10 @@ string getApp(string line) {
 
 int main() {
 
-    string path = R"(C:\Users\aditya\Downloads\events (2).jsonl)";
-
-    ifstream file(path);
-
-    if (!file.is_open()) {
-        cout << "File not found.\n";
-        return 1;
-    }
+    vector<string> paths = {
+        R"(C:\Users\aditya\Downloads\events (2).jsonl)",
+        R"(C:\Users\aditya\Downloads\events (4).jsonl)"
+    };
 
     string line;
 
@@ -85,87 +79,87 @@ int main() {
 
     map<string, int> eventCount;
 
-    while (getline(file, line)) {
+    for (string path : paths) {
 
-        if (line.empty())
+        cout << "\nReading: " << path << endl;
+        ifstream file(path);
+        if (!file.is_open()) {
+            cout << "File not found: " << path << endl;
             continue;
-
-        totalEvents++;
-
-        // Extract basic information
-        string eventType = getValue(line, "event_type");
-        string app = getApp(line);
-        string window = getValue(line, "window_title");
-        string timestamp = getValue(line, "timestamp_iso");
-
-        long long currentTime = getTime(line);
-
-        // Count event types
-        eventCount[eventType]++;
-
-        bool gap = false;
-        bool appChange = false;
-        bool windowChange = false;
-
-        // Check time gap
-        if (previousTime != -1) {
-
-            long long difference = currentTime - previousTime;
-
-            if (difference >= 5000)
-                gap = true;
         }
 
-        // Check app change
-        if (!app.empty() &&
-            !previousApp.empty() &&
-            app != previousApp) {
+        while (getline(file, line)) {
 
-            appChange = true;
+            if (line.empty())
+                continue;
+
+            totalEvents++;
+
+            string eventType = getValue(line, "event_type");
+            string app = getApp(line);
+            string window = getValue(line, "window_title");
+            string timestamp = getValue(line, "timestamp_iso");
+
+            long long currentTime = getTime(line);
+
+            eventCount[eventType]++;
+
+            bool gap = false;
+            bool appChange = false;
+            bool windowChange = false;
+
+            if (previousTime != -1) {
+
+                long long difference = currentTime - previousTime;
+
+                if (difference >= 5000)
+                    gap = true;
+            }
+
+            if (!app.empty() && !previousApp.empty() && app != previousApp) {
+                appChange = true;
+            }
+
+            if (!window.empty() &&
+                !previousWindow.empty() &&
+                window != previousWindow) {
+
+                windowChange = true;
+            }
+
+            if (gap && (appChange || windowChange)) {
+
+                candidates++;
+
+                cout << "Boundary candidate at: "
+                    << timestamp
+                    << endl;
+
+                cout << "Signals: ";
+
+                if (gap)
+                    cout << "TIME_GAP ";
+
+                if (appChange)
+                    cout << "APP_CHANGE ";
+
+                if (windowChange)
+                    cout << "WINDOW_CHANGE ";
+
+                cout << "\n\n";
+            }
+
+            previousTime = currentTime;
+
+            if (!app.empty())
+                previousApp = app;
+
+            if (!window.empty())
+                previousWindow = window;
+
         }
-
-        // Check window change
-        if (!window.empty() &&
-            !previousWindow.empty() &&
-            window != previousWindow) {
-
-            windowChange = true;
-        }
-
-        // Simple boundary rule
-        if (gap && (appChange || windowChange)) {
-
-            candidates++;
-
-            cout << "Boundary candidate at: "
-                 << timestamp
-                 << endl;
-
-            cout << "Signals: ";
-
-            if (gap)
-                cout << "TIME_GAP ";
-
-            if (appChange)
-                cout << "APP_CHANGE ";
-
-            if (windowChange)
-                cout << "WINDOW_CHANGE ";
-
-            cout << "\n\n";
-        }
-
-        // Store current values for next event
-        previousTime = currentTime;
-
-        if (!app.empty())
-            previousApp = app;
-
-        if (!window.empty())
-            previousWindow = window;
+        file.close();
     }
-
-    file.close();
 
     cout << "\nTotal events: "
          << totalEvents
