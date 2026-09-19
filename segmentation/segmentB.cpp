@@ -144,15 +144,18 @@ int main(){
                     break;
                 }
             }
-
             if(en<st) continue;
 
-            out<<session<<","<<id++<<","
-               <<e[st].t<<","<<e[en].t<<","
-               <<e[en].t-e[st].t<<","
-               <<en-st+1<<"\n";
+            if(e[en].t > e[st].t){
 
-            segments++;
+                out<<session<<","<<id++<<","
+                <<e[st].t<<","
+                <<e[en].t<<","
+                <<e[en].t-e[st].t<<","
+                <<en-st+1<<"\n";
+
+                segments++;
+            }
 
             for(int i=st;i<e.size();i++){
 
@@ -163,12 +166,13 @@ int main(){
             }
         }
 
-        if(st<e.size()){
+        if(st<e.size() && e.back().t > e[st].t){
 
             out<<session<<","<<id<<","
-               <<e[st].t<<","<<e.back().t<<","
-               <<e.back().t-e[st].t<<","
-               <<e.size()-st<<"\n";
+            <<e[st].t<<","
+            <<e.back().t<<","
+            <<e.back().t-e[st].t<<","
+            <<e.size()-st<<"\n";
 
             segments++;
         }
